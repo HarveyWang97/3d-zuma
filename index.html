@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" >
+<title>Group10 Project: ZUMA 3D</title>
+	<script id="vertex-shader" type="x-shader/x-vertex">
+		attribute  vec4 vPosition;
+		attribute vec2 aTextureCoord;
+		attribute vec4 vColor;
+		varying vec4 fColor;
+		varying vec2 vTextureCoord;
+
+		uniform mat4 modelViewMatrix;
+		uniform mat4 uPMatrix;
+		uniform mat4 colorMatrix;
+		uniform mat4 texMatrix;
+
+		void main() {
+			fColor = vColor * colorMatrix;
+		    vTextureCoord = (texMatrix * vec4(aTextureCoord, 0, 1)).xy;
+			gl_Position = uPMatrix * modelViewMatrix * vPosition;
+		}
+	</script>
+
+	<script id="fragment-shader" type="x-shader/x-fragment">
+		precision mediump float;
+
+		varying vec4 fColor;
+		varying vec2 vTextureCoord;
+
+		uniform vec2 zoom;
+		uniform sampler2D uSampler;
+
+		void main() {
+			vec2 tmp = vTextureCoord * zoom;
+
+		    gl_FragColor = fColor * texture2D(uSampler, tmp);
+		}
+	</script>
+</head>
+
+<body onload="init()">
+	<script type="text/javascript" src="Common/webgl-utils.js"></script>
+	<script type="text/javascript" src="Common/initShaders.js"></script>
+	<script type="text/javascript" src="Common/MV.js"></script>
+	<script type="text/javascript" src="zuma.js"></script>
+	<script type="text/javascript" src="collision.js"></script>
+	<script type="text/javascript" src="particle.js"></script>
+	<script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+	<script type="text/javascript">
+		function toggle(identity, otherIdentity) {
+			var block = $(identity);
+			var other = $(otherIdentity);
+			if (block.css('display') == 'none') {
+				block.show();
+				other.hide();
+			} else {
+				block.hide();
+			}
+		}
+	</script>
+	<canvas id="gl-canvas" width="1000" height="600" style="background: black">
+	Oops ... your browser doesn't support the HTML5 canvas element
+	</canvas><br>
+	FPS: <span id="FPS">0</span><br>
+	<audio controls loop autoplay="true" id="bgm">
+		<source src="bgm.mp3" type="audio/mp3">
+		Your browser does not support the audio element.
+	</audio>
+	<audio style="display: none">
+		<source src="breaking.mp3" type="audio/mpeg">
+	</audio><br>
+	<a href="#" onclick="toggle('#direction', '#credits')">Directions</a>
+	<a href="#" onclick="toggle('#credits', '#direction')">Credits</a>
+	<div id="direction" style="display: none">
+	Use 'UP', 'DOWN', LEFT', 'RIGHT' keys to move your shooting direction, and 'SPACE' bar to shoot. <br>
+	Try to eliminate all balls on track. Do not let any of them enter the evil end. GOOD LUCK!
+	</div>
+	<div id="credits" style="display: none">
+	Glass Breaking Sound Effect credits to Mike Koenig from <a href="http://soundbible.com/1761-Glass-Breaking.html">soundbible</a> <br>
+	And Banana Peel Slip Sound Effect creadits to suinho from <a href="http://soundbible.com/1438-Banana-Peel-Slip.html">soundbible</a>
+	</div>
+</body>
+</html>
